@@ -196,8 +196,9 @@ export function streamRunEvents(runId: string, onEvent: (data: any) => void, onD
         headers: { Authorization: `Bearer ${token}`, 'X-Org-Id': orgId || '' },
         signal: controller.signal,
       });
+      if (!res.ok) { console.error('SSE stream error', res.status, await res.text().catch(() => '')); onDone(); return; }
       const reader = res.body?.getReader();
-      if (!reader) return;
+      if (!reader) { onDone(); return; }
       const decoder = new TextDecoder();
       let buf = '';
       while (true) {
@@ -411,6 +412,7 @@ export function watchConnectorEvents(onEvent: (kind: string, payload: any) => vo
         headers: { Authorization: `Bearer ${token}`, 'X-Org-Id': orgId || '' },
         signal: controller.signal,
       });
+      if (!res.ok) { console.error('connector event stream error', res.status, await res.text().catch(() => '')); return; }
       const reader = res.body?.getReader();
       if (!reader) return;
       const decoder = new TextDecoder();
