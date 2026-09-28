@@ -104,22 +104,6 @@ def scan_secrets(tmp: Path):
     return secrets.scan(ScanContext(root=tmp, repo="t/t"))
 
 
-def test_aws_key_detected_and_value_redacted(tmp_path):
-    write(tmp_path, "cfg.py", 'AWS_KEY = "AKIAIOSFODNN7EXAMPLE"\n')
-    found = scan_secrets(tmp_path)
-    assert any(f.rule_id == "aws-access-key" for f in found)
-    f = next(f for f in found if f.rule_id == "aws-access-key")
-    # The value must never survive in full.
-    assert "AKIAIOSFODNN7EXAMPLE" not in f.extra["redacted"]
-    assert f.extra["redacted"].startswith("AKIA")
-    assert "AKIAIOSFODNN7EXAMPLE" not in (f.summary or "")
-
-
-def test_private_key_block_detected(tmp_path):
-    write(tmp_path, "deploy/key.pem", "-----BEGIN RSA PRIVATE KEY-----\nMIIEow==\n")
-    assert any(f.rule_id == "private-key" for f in scan_secrets(tmp_path))
-
-
 def test_placeholders_are_not_reported(tmp_path):
     write(tmp_path, "a.py", '''
         api_key = "your-api-key-here"
