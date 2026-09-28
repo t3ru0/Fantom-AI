@@ -1,0 +1,17 @@
+# FANTOM — pinned loosely on purpose; run `pip freeze > requirements.lock.txt`
+# after install and commit the lock. Python 3.12+ (3.14 verified).
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+pydantic-settings>=2.6
+SQLAlchemy>=2.0.36
+alembic>=1.14
+PyMySQL>=1.1
+python-dotenv>=1.0
+httpx>=0.28
+pytest>=8.3
+pyjwt[crypto]>=2.9
+cryptography>=43          # AES-256-GCM for the connector secrets manager (already pulled in by pyjwt[crypto]; pinned directly since app.core.secrets imports it itself)
+passlib>=1.7
+bcrypt<4.0          # passlib 1.7.4's bcrypt self-test reads bcrypt.__about__, removed in bcrypt 4.x
+email-validator>=2.2

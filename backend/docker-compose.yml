@@ -1,0 +1,34 @@
+# Local development dependencies only. The API and worker run on the host
+# during development (faster reloads); only stateful services live here.
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: fantom-db
+    environment:
+      POSTGRES_USER: fantom
+      POSTGRES_PASSWORD: fantom
+      POSTGRES_DB: fantom
+    ports:
+      - "5432:5432"
+    volumes:
+      - fantom-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fantom -d fantom"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: fantom-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  fantom-pgdata:
