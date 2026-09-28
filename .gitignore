@@ -50,3 +50,10 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Environment - never commit real config, only .env.example
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
